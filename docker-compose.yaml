@@ -1,0 +1,36 @@
+services:
+  geth:
+    build: ./eth-node/
+    volumes:
+      - blockchain:/blockchain
+    ports:
+      - "8545:8545"
+      - "7545:7545"
+    networks:
+      - BCNetwork
+  web:
+    depends_on:
+      bdd:
+        condition: service_started
+    image: nginx:1.21.4
+    ports:
+      - "81:80"
+      - "444:443"
+    networks:
+      - MyBridgedNetwork
+  bdd:
+    image: mongo:4.2.2
+    volumes:
+      - bdd:/bdd
+    networks:
+      - MyBridgedNetwork
+
+volumes:
+  bdd:
+  blockchain:
+
+networks:
+  MyBridgedNetwork:
+    driver: bridge
+  BCNetwork:
+    driver: bridge
